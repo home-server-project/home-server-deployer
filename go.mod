@@ -1,6 +1,6 @@
 module github.com/home-server-project/home-server-deployer
 
-go 1.23
+go 1.25
 
 require (
 	github.com/coreos/go-systemd/v22 v22.5.0
