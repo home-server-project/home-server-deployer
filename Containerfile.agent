@@ -10,5 +10,7 @@ FROM scratch
 COPY --from=build /out/deployer-agent /deployer-agent
 COPY catalog /usr/share/home-server-deployer/catalog
 COPY deploy/config.default.json /etc/home-server-deployer/config.json
+COPY LICENSE /usr/share/licenses/home-server-deployer/LICENSE
+COPY THIRD_PARTY_NOTICES.md /usr/share/licenses/home-server-deployer/THIRD_PARTY_NOTICES.md
 USER 0:0
 ENTRYPOINT ["/deployer-agent"]
