@@ -1,0 +1,16 @@
+[Unit]
+Description=Home Server Deployer Alpha 0 smoke application
+
+[Container]
+Image=docker.io/library/alpine:3.22
+ContainerName={{.InstanceID}}
+Label=io.home-server-project.deployer.instance={{.InstanceID}}
+Volume={{(index .Directories "data").HostPath}}:{{(index .Directories "data").ContainerPath}}:{{(index .Directories "data").MountSuffix}}
+Exec=sleep infinity
+
+[Service]
+Restart=always
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+FROM docker.io/library/golang:1.23-alpine AS build
+WORKDIR /src
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /out/deployer-agent ./cmd/deployer-agent
+
+FROM scratch
+COPY --from=build /out/deployer-agent /deployer-agent
+COPY catalog /usr/share/home-server-deployer/catalog
+COPY deploy/config.default.json /etc/home-server-deployer/config.json
+USER 0:0
+ENTRYPOINT ["/deployer-agent"]

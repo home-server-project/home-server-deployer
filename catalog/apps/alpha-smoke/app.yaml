@@ -1,0 +1,39 @@
+apiVersion: deployer.home-server-project.io/v1alpha1
+kind: Application
+metadata:
+  id: alpha-smoke
+  name: Alpha Smoke Test
+  version: "0.1.0"
+  description: Minimal long-running container used only to prove the Deployer Alpha 0 engine in a dedicated test VM.
+spec:
+  minPodmanVersion: 5.8.4
+  inputs:
+    - name: data-subpath
+      type: path
+      required: true
+      default: alpha-smoke
+      description: Relative directory below the approved application-data root.
+  directories:
+    - name: data
+      rootId: application-data
+      subpathInput: data-subpath
+      containerPath: /data
+      readOnly: false
+      securityIntent: private
+  resources:
+    - name: alpha-smoke.container
+      template: alpha-smoke.container.tmpl
+      start: true
+  update:
+    mode: manual-only
+    channel: ""
+  health:
+    strategy: runtime
+    primaryResource: alpha-smoke.container
+    timeoutSeconds: 30
+  backup:
+    strategy: filesystem
+    consistency: stop-required
+    includes:
+      - data
+    provider: ""

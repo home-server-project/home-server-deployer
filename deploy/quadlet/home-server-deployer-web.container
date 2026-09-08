@@ -1,0 +1,19 @@
+[Unit]
+Description=Home Server Deployer unprivileged Web UI
+After=home-server-deployer-agent.service
+Requires=home-server-deployer-agent.service
+
+[Container]
+Image=ghcr.io/home-server-project/home-server-deployer-web:main
+ContainerName=home-server-deployer-web
+ReadOnly=true
+NoNewPrivileges=true
+DropCapability=all
+PublishPort=127.0.0.1:8080:8080
+Volume=home-server-deployer-runtime.volume:/run/home-server-deployer
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

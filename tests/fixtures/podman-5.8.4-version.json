@@ -1,0 +1,14 @@
+{
+  "Version": "5.8.4",
+  "Arch": "amd64",
+  "Components": [
+    {
+      "Name": "Podman Engine",
+      "Version": "5.8.4",
+      "Details": {
+        "APIVersion": "5.8.0",
+        "MinAPIVersion": "4.0.0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "listenSocket": "/run/home-server-deployer/agent.sock",
+  "podmanSocket": "/run/podman/podman.sock",
+  "stateRoot": "/var/lib/home-server-deployer",
+  "documentationRoot": "/var/lib/home-server-deployer/docs",
+  "catalogRoot": "/usr/share/home-server-deployer/catalog/apps",
+  "approvedRoots": [
+    {
+      "id": "application-data",
+      "hostPath": "/var/lib/home-server-apps",
+      "agentPath": "/approved/application-data"
+    }
+  ],
+  "testVmMarker": "/etc/home-server-deployer/test-vm"
+}

@@ -1,0 +1,24 @@
+[Unit]
+Description=Home Server Deployer privileged narrow Agent
+After=podman.socket
+Requires=podman.socket
+
+[Container]
+Image=ghcr.io/home-server-project/home-server-deployer-agent:main
+ContainerName=home-server-deployer-agent
+Network=none
+ReadOnly=true
+NoNewPrivileges=true
+DropCapability=all
+SecurityLabelDisable=true
+Volume=/run/podman/podman.sock:/run/podman/podman.sock:ro
+Volume=/run/systemd/private:/run/systemd/private:ro
+Volume=/var/lib/home-server-deployer:/var/lib/home-server-deployer
+Volume=/var/lib/home-server-apps:/approved/application-data
+Volume=home-server-deployer-runtime.volume:/run/home-server-deployer
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

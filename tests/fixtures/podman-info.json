@@ -1,0 +1,11 @@
+{
+  "host": {
+    "arch": "amd64",
+    "cgroupManager": "systemd",
+    "cgroupVersion": "v2",
+    "networkBackend": "netavark",
+    "security": {
+      "rootless": false
+    }
+  }
+}
