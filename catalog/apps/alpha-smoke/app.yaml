@@ -6,7 +6,7 @@ metadata:
   version: "0.1.0"
   description: Minimal long-running container used only to prove the Deployer Alpha 0 engine in a dedicated test VM.
 spec:
-  minPodmanVersion: 5.8.4
+  minPodmanVersion: 5.8.2
   inputs:
     - name: data-subpath
       type: path

@@ -55,21 +55,35 @@ There is deliberately no endpoint accepting an arbitrary shell command, arbitrar
 
 ## Transaction model
 
-Alpha 0 uses the portable 5.8.4-6.1.x common denominator even when newer capabilities exist:
+Alpha 0 uses the portable Podman 5.8.2-6.1.x common denominator even when newer capabilities exist.
+
+Install:
 
 1. resolve and validate catalog input;
 2. resolve directories as `approved-root ID + relative path`;
 3. render trusted Quadlet templates;
 4. create a plan containing hashes, affected paths/resources, and a digest;
-5. immediately before execution, re-check administrator drift;
-6. install/replace individual Quadlets with Podman's `reload-systemd=false` behavior;
-7. perform one direct systemd daemon reload;
-8. resolve generated unit names from `podman quadlet list`;
-9. start/restart only units belonging to the managed instance;
-10. read the live installed Quadlet back from Podman and record its baseline SHA-256;
-11. atomically persist instance history and generated documentation.
+5. install individual Quadlets normally with Podman's `reload-systemd=false` behavior;
+6. perform one direct systemd daemon reload;
+7. resolve generated unit names from `podman quadlet list`;
+8. start and verify only units belonging to the managed instance;
+9. read the live installed Quadlet back from Podman and record its baseline SHA-256;
+10. atomically persist instance history and generated documentation.
 
-On a failed update, the previously read live Quadlet source is reinstalled and systemd is reloaded/restarted. The rollback does not depend on the catalog template that caused the failed update.
+Update deliberately does not use native `replace=true`:
+
+1. immediately before execution, re-check administrator drift;
+2. snapshot every current managed Quadlet from the live Podman source;
+3. stop current managed units;
+4. remove current managed Quadlets with systemd reload deferred;
+5. install the new Quadlets normally with systemd reload deferred;
+6. if installation fails, remove only sources installed by this transaction and restore the snapshots before reload;
+7. perform one direct systemd daemon reload;
+8. resolve and restart/start the new units and verify systemd reports them active;
+9. if reload/start/verification fails, stop the attempted new units, remove the attempted new source set, restore the snapshotted previous source, reload once, and restart/verify the previous units;
+10. after successful verification, persist the new live-source hashes/state/documentation.
+
+This common path is intentional. Podman 5.7.0 through 5.8.5 are affected by GHSA-fx76-2j3w-2mx6 / CVE-2026-19730, in which native Quadlet replace can retain stale trailing bytes when a new source is shorter. Podman 5.8.6 fixes the bug and Podman 6.x is unaffected, but Alpha 0 keeps identical safe remove/install semantics across the supported range. A future backend capability such as `safeNativeReplace` may optimize newer versions without changing the application/catalog model.
 
 ## Podman compatibility backend
 
@@ -84,7 +98,14 @@ Capability discovery combines:
 - `/libpod/info` host properties;
 - an isolated version capability profile for API features that cannot be safely probed through a mutating request.
 
-For Podman 6.1.x, native application installation is reported as available. Alpha 0 still uses individual Quadlets. A later backend may opt into native application operations without changing the catalog/application model.
+Capability introduction and support policy are separate concepts:
+
+- the Quadlet REST API capability family is modeled as available from Podman 5.8.0;
+- Home Server Deployer's supported floor is Podman 5.8.2;
+- Podman 5.8.2, 5.8.4, and 6.1.x are current Alpha 0 compatibility targets;
+- Podman 6.1.x native application installation is reported as available, while Alpha 0 still uses individual Quadlets.
+
+A later backend may opt into useful newer-Podman native application operations without changing the catalog/application model.
 
 No code reads or modifies Podman's old `.app` files or newer application subdirectories directly.
 

@@ -25,6 +25,10 @@ Keep privileged host concerns behind narrow interfaces:
 
 Do not leak Podman-version-specific fields or private Podman storage layout into the catalog schema.
 
+Podman API capability introduction and Home Server Deployer support policy are separate. The Quadlet REST capability family begins at Podman 5.8.0; the current Deployer-supported floor is 5.8.2.
+
+Alpha 0 must not use native Quadlet `replace=true`. Updates use stop -> remove with reload deferred -> normal install with reload deferred -> one reload -> start/restart/verify, with source-snapshot rollback. This avoids GHSA-fx76-2j3w-2mx6 / CVE-2026-19730 on affected Podman 5.8.x while keeping one transaction model for 6.1.x.
+
 ## Catalog rules
 
 Catalog YAML is decoded with unknown fields rejected.

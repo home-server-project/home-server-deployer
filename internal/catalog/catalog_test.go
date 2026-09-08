@@ -11,7 +11,7 @@ import (
 func TestLoadRejectsUnknownFields(t *testing.T) {
 	d := t.TempDir()
 	appDir := filepath.Join(d, "x")
-	_ = os.Mkdir(appDir, 0755)
+	_ = os.Mkdir(appDir, 0o755)
 	content := `apiVersion: deployer.home-server-project.io/v1alpha1
 kind: Application
 metadata:
@@ -20,7 +20,7 @@ metadata:
   version: "1"
   nope: true
 spec:
-  minPodmanVersion: 5.8.4
+  minPodmanVersion: 5.8.2
   inputs: []
   directories: []
   resources:
@@ -36,7 +36,7 @@ spec:
     consistency: none
     includes: []
 `
-	if err := os.WriteFile(filepath.Join(appDir, "app.yaml"), []byte(content), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(appDir, "app.yaml"), []byte(content), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := Load(d); err == nil {
